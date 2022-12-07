@@ -1,0 +1,3 @@
+[36m@ahoylabs/env-ts:build[0m: cache hit, replaying output [2m81154a4c53a8faac[0m
+[36m@ahoylabs/env-ts:build: [0mwarning package.json: "dependencies" has dependency "ts-node" with range "^10.9.1" that collides with a dependency in "devDependencies" of the same name with version "10.9.1"
+[36m@ahoylabs/env-ts:build: [0m$ rm -rf dist && rm -rf *.tsbuildinfo && tsc --build

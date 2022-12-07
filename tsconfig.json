@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig.json to read more about this file */
+    "target": "esnext",
+    "lib": ["DOM", "ESNext"],
+    "removeComments": true,
+    "composite": true,
+    "module": "commonjs",
+    "rootDir": "src",
+    "declaration": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
