@@ -1,4 +1,10 @@
-# `@ahoylabs/env-ts`
+# @ahoylabs/env-ts
+
+## Install
+
+`yarn add --dev @ahoylabs/env-ts`
+
+## Usage
 
 Usages: `env-ts [env-file-name] [app-name] [file-to-env] [optional-filter-for-env-names] && env $(env-ts [env-file-name] [app-name]) [command-with-env]`
 

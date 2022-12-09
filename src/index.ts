@@ -104,7 +104,9 @@ if (process.env.${i} == null) {
   )
   .join('')}
 
-${repoVars.map((i) => `export const ${i} = process.env.${i}`).join('\n')}
+export const env = {
+  ${repoVars.map((i) => `${i}: process.env.${i},`).join('\n')}
+}
 `
 
   fs.writeFileSync(path.join(process.cwd(), fileSrc), file, 'utf8')
