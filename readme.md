@@ -22,4 +22,4 @@ For example, in `repos/app/package.json`:
 
 ## License
 
-MIT © [Ahoy Labs, Inc.](https://ahoy.fund)
+MIT © [Ahoy Labs, Inc.](https://ahoylabs.xyz)
