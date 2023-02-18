@@ -1,6 +1,6 @@
 {
   "name": "@ahoylabs/env-ts",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "MIT",
   "author": "Ben Williams <git@biwills.com>",
   "main": "dist/index.js",
