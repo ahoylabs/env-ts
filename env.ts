@@ -1,3 +1,5 @@
+// used for testing
+
 import type { ENVTypes } from './envTypes'
 
 export const envVars: ENVTypes = {
