@@ -2,8 +2,11 @@
   "name": "@ahoylabs/env-ts",
   "version": "0.2.1",
   "license": "MIT",
-  "author": "Ahoy Labs, Inc. <git@ahoy.fund>",
+  "author": "Ben Williams <git@biwills.com>",
   "main": "dist/index.js",
+  "homepage": "https://github.com/ahoylabs/env-ts",
+  "repository": "https://github.com/ahoylabs/env-ts",
+  "bugs": "https://github.com/ahoylabs/env-ts/issues",
   "types": "dist/index.d.ts",
   "bin": {
     "env-ts": "./bin.js"

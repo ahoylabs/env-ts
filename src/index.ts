@@ -60,6 +60,7 @@ const getListofEnvVars = (repo: string): string[] => {
     const line = _line.trim()
     if (line === '') return
     if (line.startsWith('/**') || line.startsWith('*')) return
+    if (line.startsWith('[')) return
     if (line.startsWith('//')) return
     if (line.endsWith('{')) {
       currentTarget = line.split(':')[0]
@@ -86,7 +87,7 @@ const getListofEnvVars = (repo: string): string[] => {
 
 export const __internal_for_testing__ = { getListofEnvVars }
 
-export const generateENVFile = (repo: string, fileSrc: string, prefix = '') => {
+export const generateENVFile = (repo: string, prefix = '') => {
   const repoVars = getListofEnvVars(repo).filter((i) => i.startsWith(prefix))
 
   const file = `/* eslint-disable */
@@ -105,9 +106,13 @@ if (process.env.${i} == null) {
   .join('')}
 
 export const env = {
-  ${repoVars.map((i) => `${i}: process.env.${i},`).join('\n')}
+${repoVars.map((i) => `  ${i}: process.env.${i},`).join('\n')}
 }
 `
+
+  const generatedPrefex = fs.existsSync('./src') ? 'src/' : ''
+
+  const fileSrc = `./${generatedPrefex}/__generated__/env.ts`
 
   fs.writeFileSync(path.join(process.cwd(), fileSrc), file, 'utf8')
 }

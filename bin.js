@@ -1,9 +1,40 @@
 #!/usr/bin/env ts-node
 const { exit } = require('process')
+const { writeFileSync, existsSync, mkdirSync } = require('fs')
 const { main, generateENVFile } = require('./dist/index.js')
+
+const new_env_content = `import type { ENVTypes } from './envTypes'
+
+export const envVars: ENVTypes = {
+  app: {
+    EXAMPLE_ENV: string
+  },
+}
+`
+const new_envTypes_content = `
+export type ENVTypes = {
+  app: {
+    [key: string]: string // allow for extra keys
+    EXAMPLE_ENV: string
+  }
+}
+`
 
 // don't run on VERCEL deployments
 if (process.env.VERCEL) return ''
+
+if (process.argv[2] === 'init') {
+  try {
+    writeFileSync('./env.ts', new_env_content, { flag: 'wx' })
+    writeFileSync('./envTypes.ts', new_envTypes_content, { flag: 'wx' })
+    const generatedPrefex = existsSync('./src') ? 'src/' : ''
+    mkdirSync(`./${generatedPrefex}__generated__`)
+  } catch (err) {
+    console.error('There was an error running init. Have you already run it?')
+    return exit(1)
+  }
+  return exit(0)
+}
 
 if (!process.argv[2]) {
   console.error(
