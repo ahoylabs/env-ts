@@ -8,3 +8,6 @@ jest.config.js
 .editorconfig
 .prettierrc
 yarn.lock
+env.ts
+envTypes.ts
+.github/
