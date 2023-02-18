@@ -7,7 +7,7 @@ const new_env_content = `import type { ENVTypes } from './envTypes'
 
 export const envVars: ENVTypes = {
   app: {
-    EXAMPLE_ENV: string
+    EXAMPLE_ENV: 'hello'
   },
 }
 `
