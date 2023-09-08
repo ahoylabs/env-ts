@@ -47,4 +47,4 @@ console.log(env.EXAMPLE_ENV)
 
 ## License
 
-MIT © [Ahoy Labs, Inc.](https://ahoylabs.xyz)
+MIT © [Ahoy Labs, Inc.](https://faraday.dev)
