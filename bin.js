@@ -1,5 +1,6 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 const { exit } = require('process')
+const path = require('path')
 const { writeFileSync, existsSync, mkdirSync } = require('fs')
 const { main, generateENVFile } = require('./dist/index.js')
 
@@ -21,42 +22,45 @@ export type ENVTypes = {
 `
 
 // don't run on VERCEL deployments
-if (process.env.VERCEL) return ''
+if (process.env.VERCEL) {
+  process.exit(0)
+}
 
 if (process.argv[2] === 'init') {
   try {
     writeFileSync('./env.ts', new_env_content, { flag: 'wx' })
     writeFileSync('./envTypes.ts', new_envTypes_content, { flag: 'wx' })
-    const generatedPrefex = existsSync('./src') ? 'src/' : ''
-    mkdirSync(`./${generatedPrefex}__generated__`)
+    const generatedPrefix = existsSync('./src') ? 'src' : ''
+    mkdirSync(path.join(generatedPrefix, '__generated__'), { recursive: true })
   } catch (err) {
     console.error('There was an error running init. Have you already run it?')
-    return exit(1)
+    exit(1)
   }
-  return exit(0)
+  exit(0)
 }
 
 if (!process.argv[2]) {
   console.error(
     'missing target file: please call env-ts with a target file, ex: `env-ts env.ts [target-sub-repo]',
   )
-  return exit(1)
+  exit(1)
 }
 if (!process.argv[3]) {
   console.error(
     'missing target sub-repo: please call env-ts with a target sub-repo, ex: `env-ts env.ts app`',
   )
-  return exit(1)
+  exit(1)
 }
 
 main(process.argv[2], process.argv[3])
   .then((envString) => {
     console.log(envString)
     if (process.argv[4]) {
-      generateENVFile(process.argv[3], process.argv[4], process.argv[5])
+      // process.argv[4] is the prefix filter for env vars
+      generateENVFile(process.argv[3], process.argv[4])
     }
   })
   .catch((err) => {
-    console.error(err)
+    console.error(err.message || err)
     exit(1)
   })

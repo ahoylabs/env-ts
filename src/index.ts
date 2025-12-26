@@ -1,7 +1,8 @@
 #!/usr/bin/env ts-node
 import fs from 'fs'
 import path from 'path'
-import { exit } from 'process'
+
+export type EnvVarsType = { [repo: string]: { [key: string]: string } }
 
 const objectToEnvLines = (obj: { [key: string]: string }) => {
   const entries = Object.entries(obj)
@@ -10,19 +11,18 @@ const objectToEnvLines = (obj: { [key: string]: string }) => {
   }, '')
 }
 
-const getENVVars = async (targetFile: string) => {
+const getENVVars = async (targetFile: string): Promise<EnvVarsType> => {
   let currentDir = __dirname
 
   while (!fs.existsSync(path.join(currentDir, targetFile))) {
     if (currentDir === '/') {
-      console.error(`unable to find '${targetFile}' in a parent directory`)
-      return exit(1)
+      throw new Error(`unable to find '${targetFile}' in a parent directory`)
     }
     currentDir = path.join(currentDir, '..')
   }
 
   const { envVars } = await import(path.join(currentDir, targetFile))
-  return envVars
+  return envVars as EnvVarsType
 }
 
 export const main = async (sourceENVFile: string, targetENVSubRepo: string) => {
@@ -30,11 +30,14 @@ export const main = async (sourceENVFile: string, targetENVSubRepo: string) => {
   const validEnvs = Object.keys(envVars)
 
   if (!validEnvs.includes(targetENVSubRepo)) {
-    console.error('Second command line arg must be a valid repo')
-    return exit(1)
+    throw new Error(
+      `Invalid repo '${targetENVSubRepo}'. Valid repos: ${validEnvs.join(
+        ', ',
+      )}`,
+    )
   }
 
-  const targetVars = envVars[targetENVSubRepo as any] as any
+  const targetVars = envVars[targetENVSubRepo]
 
   const envString = objectToEnvLines(targetVars)
   return envString
@@ -45,14 +48,18 @@ const getListofEnvVars = (repo: string): string[] => {
 
   while (!fs.existsSync(path.join(currentDir, 'envTypes.ts'))) {
     if (currentDir === '/') {
-      console.error('unable to find `envTypes.ts` in a parent directory')
-      return exit(1)
+      throw new Error('unable to find `envTypes.ts` in a parent directory')
     }
     currentDir = path.join(currentDir, '..')
   }
 
   const file = fs.readFileSync(path.join(currentDir, 'envTypes.ts'), 'utf8')
-  const lines = file.split('ENVTypes = {')[1].split('\n')
+  // More flexible regex that handles optional whitespace
+  const match = file.match(/ENVTypes\s*=\s*\{([\s\S]*)\}/)
+  if (!match) {
+    throw new Error('Could not parse ENVTypes from envTypes.ts')
+  }
+  const lines = match[1].split('\n')
 
   const varsNeeded: { [name in string]?: string[] } = {}
   let currentTarget: string | null = null
@@ -110,9 +117,14 @@ ${repoVars.map((i) => `  ${i}: process.env.${i},`).join('\n')}
 }
 `
 
-  const generatedPrefex = fs.existsSync('./src') ? 'src/' : ''
+  const generatedPrefix = fs.existsSync('./src') ? 'src' : ''
 
-  const fileSrc = `./${generatedPrefex}/__generated__/env.ts`
+  const fileSrc = path.join(
+    process.cwd(),
+    generatedPrefix,
+    '__generated__',
+    'env.ts',
+  )
 
-  fs.writeFileSync(path.join(process.cwd(), fileSrc), file, 'utf8')
+  fs.writeFileSync(fileSrc, file, 'utf8')
 }
